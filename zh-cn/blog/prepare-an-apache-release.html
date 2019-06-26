@@ -5,7 +5,7 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="keywords" content="Dubbo, Apache, Release" />
-	<meta name="description" content="prepare-an-apache-release" />
+	<meta name="description" content="本文介绍了Apache如何发布内容和流程" />
 	<!-- 网页标签标题 -->
 	<title>如何准备Apache Release</title>
 	<link rel="shortcut icon" href="/img/dubbo.ico"/>
@@ -142,6 +142,9 @@ $ gpg --delete-keys 1808C6444C781C0AEA0AAD4C4D6A8007D20DB8A4
 <blockquote>
 <p>执行release插件时，如果指定了<code>-DpushChanges=true</code>, 插件会自动提交到远端的GitHub仓库中，此时就需要输入GitHub的密码，注意不是输入web页面的登录密码，而是一个<code>Personal access tokens</code>，获取方式详见<a href="https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line">这里</a></p>
 </blockquote>
+<blockquote>
+<p>这里有一点要注意的是tag， 在执行过程中，需要选择发布的artifactId, 下一个版本artifactId以及发布版本的tag, tag默认的是dubbo-parent-xxxx，需要改成dubbo-xxxx</p>
+</blockquote>
 <p>执行完上述步骤后，你会发现：</p>
 <ol>
 <li><code>source-release.zip</code> 和 <code>bin-release.zip</code>包已经生成在<code>dubbo-distribution</code>目录下，请解压并检查文件是否完整</li>
@@ -188,10 +191,10 @@ $ gpg --delete-keys 1808C6444C781C0AEA0AAD4C4D6A8007D20DB8A4
 <li>
 <p>生成sha512签名</p>
 <p>针对<code>source-release.zip</code></p>
-<pre><code class="language-shell"><span class="hljs-meta">$</span><span class="bash"> shasum -a 512 apache-dubbo-incubating-<span class="hljs-variable">${release_version}</span>-<span class="hljs-built_in">source</span>-release.zip &gt;&gt; apache-dubbo-incubating-<span class="hljs-variable">${release_version}</span>-<span class="hljs-built_in">source</span>-release.zip.sha512</span>
+<pre><code class="language-shell"><span class="hljs-meta">$</span><span class="bash"> shasum -a 512 apache-dubbo-<span class="hljs-variable">${release_version}</span>-<span class="hljs-built_in">source</span>-release.zip &gt;&gt; apache-dubbo-<span class="hljs-variable">${release_version}</span>-<span class="hljs-built_in">source</span>-release.zip.sha512</span>
 </code></pre>
 <p>针对<code>bin-release.zip</code>，需要增加<code>-b</code>参数，表明是一个二进制文件</p>
-<pre><code class="language-shell"><span class="hljs-meta">$</span><span class="bash"> shasum -b -a 512 apache-dubbo-incubating-<span class="hljs-variable">${release_version}</span>-bin-release.zip &gt;&gt; apache-dubbo-incubating-<span class="hljs-variable">${release_version}</span>-bin-release.zip.sha512</span>
+<pre><code class="language-shell"><span class="hljs-meta">$</span><span class="bash"> shasum -b -a 512 apache-dubbo-<span class="hljs-variable">${release_version}</span>-bin-release.zip &gt;&gt; apache-dubbo-<span class="hljs-variable">${release_version}</span>-bin-release.zip.sha512</span>
 </code></pre>
 </li>
 <li>
@@ -214,8 +217,8 @@ https://dist.apache.org/repos/dist/dev/incubator/dubbo/${release_version}/
 <p>然后，开始验证环节，验证包含但不限于以下内容和形式</p>
 <h3>检查签名和hash等信息</h3>
 <h4>检查sha512哈希</h4>
-<pre><code class="language-sh">$ shasum -c apache-dubbo-incubating-<span class="hljs-variable">${release_version}</span>-<span class="hljs-built_in">source</span>-release.zip.sha512
-$ shasum -c apache-dubbo-incubating-<span class="hljs-variable">${release_version}</span>-bin-release.zip.sha512
+<pre><code class="language-sh">$ shasum -c apache-dubbo-<span class="hljs-variable">${release_version}</span>-<span class="hljs-built_in">source</span>-release.zip.sha512
+$ shasum -c apache-dubbo-<span class="hljs-variable">${release_version}</span>-bin-release.zip.sha512
 </code></pre>
 <h4>检查gpg签名</h4>
 <p>如果是第一次检查，需要首先导入公钥。</p>
@@ -225,14 +228,14 @@ $ shasum -c apache-dubbo-incubating-<span class="hljs-variable">${release_versio
    &gt; trust <span class="hljs-comment"># type trust command</span>
 </code></pre>
 <p>然后使用如下命令检查签名</p>
-<pre><code class="language-sh">gpg --verify apache-dubbo-incubating-2.6.3-source-release.zip.asc apache-dubbo-incubating-2.6.3-source-release.zip
-gpg --verify apache-dubbo-incubating-2.6.3-bin-release.zip.asc apache-dubbo-incubating-2.6.3-bin-release.zip
+<pre><code class="language-sh">gpg --verify apache-dubbo-2.6.3-source-release.zip.asc apache-dubbo-2.6.3-source-release.zip
+gpg --verify apache-dubbo-2.6.3-bin-release.zip.asc apache-dubbo-2.6.3-bin-release.zip
 </code></pre>
 <h3>检查源码包的文件内容</h3>
-<p>解压缩<code>apache-dubbo-incubating-${release_version}-source-release.zip</code>，进行如下检查:</p>
+<p>解压缩<code>apache-dubbo-${release_version}-source-release.zip</code>，进行如下检查:</p>
 <ul>
 <li>Directory with 'incubating' in name
-<code>apache-dubbo-incubating-${release_version}-source-release</code></li>
+<code>apache-dubbo-${release_version}-source-release</code></li>
 <li>DISCLAIMER exists</li>
 <li>LICENSE and NOTICE exists and contents are good</li>
 <li>All files and no binary files exist</li>
@@ -246,14 +249,14 @@ mvn clean <span class="hljs-built_in">test</span> -Drat.skip=<span class="hljs-l
 <li>Release candidates match with corresponding tags, you can find tag link and hash in vote email.
 <ul>
 <li>check the version number in pom.xml are the same</li>
-<li>check there are no extra files or directories in the source package, for example, no empty directories or useless log files.<br>
+<li>check there are no extra files or directories in the source package, for example, no empty directories or useless log files，这里需要注意换行符是否一致<br>
 <code>diff -r a rc_dir tag_dir</code></li>
 <li>check the top n tag commits, dive into the related files and check if the source package has the same changes</li>
 </ul>
 </li>
 </ul>
 <h3>检查二进制包的文件内容C</h3>
-<p>解压缩<code>apache-dubbo-incubating-${release_version}-bin-release.zip</code>，进行如下检查:</p>
+<p>解压缩<code>apache-dubbo-${release_version}-bin-release.zip</code>，进行如下检查:</p>
 <ul>
 <li>Check signatures are good</li>
 <li>'incubating' in name</li>
@@ -263,7 +266,7 @@ mvn clean <span class="hljs-built_in">test</span> -Drat.skip=<span class="hljs-l
 <h2>进入投票</h2>
 <p>投票分两个阶段：</p>
 <ol>
-<li>Dubbo社区投票，发起投票邮件到dev@dubbo.apache.org。在社区开发者Review，经过至少72小时并统计到3个同意发版的binding票后（只有PPMC的票才是binding），即可进入下一阶段的投票。</li>
+<li>Dubbo社区投票，发起投票邮件到dev@dubbo.apache.org。在社区开发者Review，经过至少72小时并统计到3个同意发版的binding票后（只有PMC的票才是binding），即可进入下一阶段的投票。</li>
 <li>Apache社区投票，发起投票邮件到general@incubator.apache.org。经过至少72小时并统计到3个同意发版的binding票后（只有IPMC Member的票才是binding），即可进行正式发布。</li>
 </ol>
 <p>Dubbo社区投票邮件模板：</p>
@@ -275,13 +278,13 @@ The release candidates:
 https://dist.apache.org/repos/dist/dev/incubator/dubbo/2.6.2/
 
 Git tag for the release:
-https://github.com/apache/incubator-dubbo/tree/dubbo-2.6.2
+https://github.com/apache/dubbo/tree/dubbo-2.6.2
 
 Hash for the release tag:
 afab04c53edab38d52275d2a198ea1aff7a4f41e
 
 Release Notes:
-https://github.com/apache/incubator-dubbo/releases/tag/untagged-4775c0a22c60fca55118
+https://github.com/apache/dubbo/releases/tag/untagged-4775c0a22c60fca55118
 
 The artifacts have been signed with Key : 28681CB1, which can be found in the keys file:
 https://dist.apache.org/repos/dist/dev/incubator/dubbo/KEYS
@@ -308,7 +311,7 @@ Apache Dubbo (Incubating) version 2.6.4.
 We now kindly request the Incubator PMC members review and vote on this
 incubator release.
 
-Apache Dubbo™ (incubating) is a high-performance, java based, open source
+Apache Dubbo™  is a high-performance, java based, open source
 RPC framework. Dubbo offers three key functionalities, which include
 interface based remote call, fault tolerance &amp; load balancing, and
 automatic service registration &amp; discovery.
@@ -321,21 +324,21 @@ The release candidates (RC1):
 https://dist.apache.org/repos/dist/dev/incubator/dubbo/2.6.4
 
 Git tag for the release (RC1):
-https://github.com/apache/incubator-dubbo/tree/dubbo-2.6.4
+https://github.com/apache/dubbo/tree/dubbo-2.6.4
 
 Hash for the release tag:
 88037747a3b69d3225c73f6fbcda36ebd8435887
 
 Release Notes:
-*https://github.com/apache/incubator-dubbo/blob/dubbo-2.6.4/CHANGES.md
-&lt;https://github.com/apache/incubator-dubbo/blob/dubbo-2.6.4/CHANGES.md&gt;*
+*https://github.com/apache/dubbo/blob/dubbo-2.6.4/CHANGES.md
+&lt;https://github.com/apache/dubbo/blob/dubbo-2.6.4/CHANGES.md&gt;*
 
 The artifacts have been signed with Key : 7955FB6D1DD21CF7, which can be
 found in the keys file:
 https://dist.apache.org/repos/dist/dev/incubator/dubbo/KEYS
 
 Look at here for how to verify this release candidate:
-https://github.com/apache/incubator-dubbo-website/blob/asf-site/blog/en-us/prepare-an-apache-release.md#prepare-apache-release
+https://github.com/apache/dubbo-website/blob/asf-site/blog/en-us/prepare-an-apache-release.md#prepare-apache-release
 
 The vote will be open for at least 72 hours or until necessary number of
 votes are reached.
@@ -367,12 +370,46 @@ The Apache Dubbo (Incubating) Team
 <li>将<a href="https://dist.apache.org/repos/dist/dev/incubator/dubbo">dev</a>目录下的发布包添加到<a href="https://dist.apache.org/repos/dist/release/incubator/dubbo">release</a>目录下，KEYS有更新的，也需要同步更新。</li>
 <li>删除<a href="https://dist.apache.org/repos/dist/dev/incubator/dubbo">dev</a>目录下的发布包</li>
 <li>删除<a href="https://dist.apache.org/repos/dist/release/incubator/dubbo">release</a>目录下上一个版本的发布包，这些包会被自动保存在<a href="https://archive.apache.org/dist/incubator/dubbo">这里</a></li>
-<li>发布GitHub上的<a href="https://github.com/apache/incubator-dubbo/releases">release notes</a></li>
+<li>发布GitHub上的<a href="https://github.com/apache/dubbo/releases">release notes</a></li>
 <li>修改GitHub的Readme文件，将版本号更新到最新发布的版本</li>
-<li>在官网下载<a href="http://dubbo.apache.org/en-us/blog/download.html">页面</a>上添加最新版本的下载链接。最新的下载链接应该类似<a href="https://www.apache.org/dyn/closer.cgi?path=incubator/dubbo/$VERSION/apache-dubbo-incubating-$VERSION-source-release.zip">这样</a>. 同时更新以前版本的下载链接，改为类似<a href="https://archive.apache.org/dist/incubator/dubbo/$VERSION/apache-dubbo-incubating-$VERSION-bin-release.zip">这样</a>. 具体可以参考过往的<a href="https://github.com/apache/incubator-dubbo-website/blob/asf-site/blog/en-us/download.md">下载链接</a></li>
+<li>在官网下载<a href="http://dubbo.apache.org/en-us/blog/download.html">页面</a>上添加最新版本的下载链接。最新的下载链接应该类似<a href="https://www.apache.org/dyn/closer.cgi?path=incubator/dubbo/$VERSION/apache-dubbo-$VERSION-source-release.zip">这样</a>. 同时更新以前版本的下载链接，改为类似<a href="https://archive.apache.org/dist/incubator/dubbo/$VERSION/apache-dubbo-$VERSION-bin-release.zip">这样</a>. 具体可以参考过往的<a href="https://github.com/apache/dubbo-website/blob/asf-site/blog/en-us/download.md">下载链接</a></li>
 <li>合并<code>${release-version}-release</code>分支到对应的主干分支， 然后删除相应的release分支，例如: <code>git push origin --delete 2.7.0-release</code></li>
-<li>发邮件到 <code>dev@dubbo.apache.org</code> 和 <code>general@incubator.apache.org</code>，通知社区发布完成。</li>
+<li>发邮件到 <code>dev@dubbo.apache.org</code> 和 <code>general@incubator.apache.org</code>
+宣布release邮件模板：</li>
 </ol>
+<pre><code class="language-text">Hello Community,
+
+The Apache Dubbo team is pleased to announce that the
+2.6.6 has just been released.
+
+Apache Dubbo™  is a high-performance, java based, open source
+RPC framework. Dubbo offers three key functionalities, which include
+interface based remote call, fault tolerance &amp; load balancing, and
+automatic service registration &amp; discovery.
+
+Both the source release[1] and the maven binary release[2] are available
+now, you can also find the detailed release notes in here[3].
+
+
+If you have any usage questions, or have problems when upgrading or find
+any problems about enhancements included in this release, please don’t
+hesitate to let us know by sending feedback to this mailing list or filing
+an issue on GitHub[4].
+
+
+
+=====
+*Disclaimer*
+
+Apache Dubbo is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.
+
+
+[1] http://dubbo.apache.org/en-us/blog/download.html
+[2] http://central.maven.org/maven2/com/alibaba/dubbo
+[3] https://github.com/apache/dubbo/releases
+[4] https://github.com/apache/dubbo/issues
+
+</code></pre>
 <h2>完成Maven Convenient Binary发布（可选）</h2>
 <p><strong><a href="http://repository.apache.org">repository.apache.org</a></strong> nexus仓库的权限已经申请，参见<a href="https://issues.apache.org/jira/browse/INFRA-16451">jira</a></p>
 <p>发布jar包到maven仓库，首先访问<a href="https://repository.apache.org">repository.apache.org</a>, 选择<code>staging repository</code>, 点击<code>release</code>按钮。等待一段时间之后，在<a href="https://repository.apache.org/content/repositories/releases/org/apache/dubbo/">这里</a>确认完整性和正确性. 发布到Maven中央仓库则还需要等待一段时间。可以在<a href="https://repo.maven.apache.org/maven2/org/apache/dubbo">这里</a>进行确认。</p>
@@ -381,7 +418,7 @@ The Apache Dubbo (Incubating) Team
 <p>If you've encoutered this error, try the following commands:</p>
 <pre><code>export GPG_TTY=$(tty)
 </code></pre>
-</section><footer class="footer-container"><div class="footer-body"><img src="/img/dubbo_gray.png"/><img class="apache" src="/img/apache_logo.png"/><div class="cols-container"><div class="col col-12"><h3>Disclaimer</h3><p>Apache Dubbo is an effort undergoing incubation at The Apache Software Foundation (ASF), sponsored by the Incubator. Incubation is required of all newly accepted projects until a further review indicates that the infrastructure, communications, and decision making process have stabilized in a manner consistent with other successful ASF projects. While incubation status is not necessarily a reflection of the completeness or stability of the code, it does indicate that the project has yet to be fully endorsed by the ASF.</p></div><div class="col col-4"><dl><dt>ASF</dt><dd><a href="http://www.apache.org" target="_self">基金会</a></dd><dd><a href="http://www.apache.org/licenses/" target="_self">证书</a></dd><dd><a href="http://www.apache.org/events/current-event" target="_self">事件</a></dd><dd><a href="http://www.apache.org/foundation/sponsorship.html" target="_self">赞助</a></dd><dd><a href="http://www.apache.org/foundation/thanks.html" target="_self">致谢</a></dd></dl></div><div class="col col-4"><dl><dt>文档</dt><dd><a href="/zh-cn/docs/user/quick-start.html" target="_self">快速开始</a></dd><dd><a href="/zh-cn/docs/dev/build.html" target="_self">开发者指南</a></dd><dd><a href="/zh-cn/docs/admin/ops/dubbo-ops.html" target="_self">运维管理</a></dd></dl></div><div class="col col-4"><dl><dt>资源</dt><dd><a href="/zh-cn/blog/index.html" target="_self">博客</a></dd><dd><a href="/zh-cn/community/index.html" target="_self">社区</a></dd><dd><a href="https://www.apache.org/security" target="_self">安全</a></dd></dl></div></div><div class="copyright"><span>Copyright © 2018-2019 The Apache Software Foundation. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</span></div></div></footer></div></div>
+</section><footer class="footer-container"><div class="footer-body"><img src="/img/dubbo_gray.png"/><img class="apache" src="/img/apache_logo.png"/><div class="cols-container"><div class="col col-12"><h3></h3><p></p></div><div class="col col-4"><dl><dt>ASF</dt><dd><a href="http://www.apache.org" target="_self">基金会</a></dd><dd><a href="http://www.apache.org/licenses/" target="_self">证书</a></dd><dd><a href="http://www.apache.org/events/current-event" target="_self">事件</a></dd><dd><a href="http://www.apache.org/foundation/sponsorship.html" target="_self">赞助</a></dd><dd><a href="http://www.apache.org/foundation/thanks.html" target="_self">致谢</a></dd></dl></div><div class="col col-4"><dl><dt>文档</dt><dd><a href="/zh-cn/docs/user/quick-start.html" target="_self">快速开始</a></dd><dd><a href="/zh-cn/docs/dev/build.html" target="_self">开发者指南</a></dd><dd><a href="/zh-cn/docs/admin/ops/dubbo-ops.html" target="_self">运维管理</a></dd><dd><a href="https://github.com/apache/dubbo-website/issues/new" target="_self">报告文档问题</a></dd><dd><a href="https://github.com/apache/dubbo-website" target="_self">编辑此文档</a></dd></dl></div><div class="col col-4"><dl><dt>资源</dt><dd><a href="/zh-cn/blog/index.html" target="_self">博客</a></dd><dd><a href="/zh-cn/community/index.html" target="_self">社区</a></dd><dd><a href="https://www.apache.org/security" target="_self">安全</a></dd></dl></div></div><div class="copyright"><span>Copyright © 2018-2019 The Apache Software Foundation. Apache and the Apache feather logo are trademarks of The Apache Software Foundation.</span></div></div></footer></div></div>
 	<script src="https://f.alicdn.com/react/15.4.1/react-with-addons.min.js"></script>
 	<script src="https://f.alicdn.com/react/15.4.1/react-dom.min.js"></script>
 	<script>
