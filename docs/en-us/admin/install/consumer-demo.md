@@ -1,0 +1,18 @@
+
+# install demo consumer
+
+install:
+
+```sh
+git clone https://github.com/apache/dubbo.git
+cd dubbo
+Please start Provider first
+add -Djava.net.preferIPv4Stack=true if your IDE is Intellij Idea
+```
+
+configuration:
+
+```sh
+resource/META-INFO.spring/dubbo-demo-consumer.xml
+change dubbo:registry to the real registry center address
+```
